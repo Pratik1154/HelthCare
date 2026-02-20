@@ -2,8 +2,6 @@ import React, { useState } from 'react'
 import { assets } from '../assets/assets'
 
 const MyProfile = () => {
-  // const [isEdit, setIsEdit] = useState(false)
-
 
   const [userData, setUserData] = useState({
     name: "Edward Vincent",
@@ -51,7 +49,7 @@ const MyProfile = () => {
                               <br />
                               {userData.address.line2}
                           </p>
-                  }
+                }
           </div>
       </div>
       <div>
@@ -80,7 +78,7 @@ const MyProfile = () => {
 
                 {isEdit
                     ? <button onClick={() => setisEdit(false)} className='border border-primary px-8 py-2 rounded-full hover:bg-primary hover:text-white transition-all'>Save information</button>
-                    : <button onClick={() =>setisEdit(true)} className='border border-primary px-8 py-2 rounded-full hover:bg-primary hover:text-white transition-all'>Edit</button>
+                    : <button onClick={() => setisEdit(true)} className='border border-primary px-8 py-2 rounded-full hover:bg-primary hover:text-white transition-all'>Edit</button>
                 }
             </div>
        </div>
