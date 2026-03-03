@@ -7,7 +7,8 @@ const connectDB = async () =>{
         if(!uri){
             throw new Error('MONGODB_URL not set in environment')
         }
-        await mongoose.connect(`${uri}/preceptro`)
+        const dbName = 'preceptro'
+        await mongoose.connect(uri, { dbName })
     }catch(error){
         console.error('Failed to connect to MongoDB:', error.message)
         process.exit(1)
