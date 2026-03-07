@@ -80,4 +80,9 @@ const loginAdmin = async (req, res) => {
     }
 }
 
+// API to get all doctor 
+const allDoctors = async (req, res) => {
+    
+}
+
 export {addDoctor, loginAdmin}
