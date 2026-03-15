@@ -1,12 +1,18 @@
 import React, { useState } from 'react'
 import { assets } from '../assets/assets'
 import { NavLink, useNavigate } from 'react-router-dom'
+import { useContext } from 'react';
+import { AppContext } from '../context/AppContex';
 
 const Navbar = () => {
 
         const navigate = useNavigate();
         const [showMenu, setshowMenu] = useState(false);
-        const [token, settoken] = useState(true);
+        const {token, setToken, userData} = useContext(AppContext);
+        const logout = () => {
+          setToken('')
+          localStorage.removeItem('token')
+        }
 
   return (
     
@@ -22,7 +28,6 @@ const Navbar = () => {
                                   after:transition-transform after:duration-300
                                   hover:after:scale-x-100">Home</NavLink>
                 </li>
-
                 <li className="py-2">
                   <NavLink to="/doctors" className="no-underline relative py-2 no-underline
                                   after:content-[''] after:absolute after:left-0 after:-bottom-0
@@ -31,7 +36,6 @@ const Navbar = () => {
                                   after:transition-transform after:duration-300
                                   hover:after:scale-x-100">All Doctors</NavLink>
                 </li>
-
                 <li className="py-2">
                   <NavLink to="/about" className="no-underline relative py-2 no-underline
                                   after:content-[''] after:absolute after:left-0 after:-bottom-0
@@ -54,9 +58,9 @@ const Navbar = () => {
       <div className='flex item-center gap-4'>
 
         {
-          token?
+          token && userData?
               <div className='flex items-center gap-2 cursor-pointer group relative'>
-                <img className='w-8 rounded-full' src={assets.profile_pic} alt="" />
+                <img className='w-8 rounded-full' src={userData.image} alt="" />
                 <img className='w-2.5' src={assets.dropdown_icon} alt="" />
 
                 <div className='absolute top-1 right-8 pt-14 text-base font-medium text-gray-600 hidden group-hover:block'>
@@ -67,7 +71,7 @@ const Navbar = () => {
                     <p onClick={()=>{navigate('my-Appointment')}} className="px-2 py-1 rounded-md cursor-pointer 
                                   hover:bg-white hover:text-black 
                                   transition-colors duration-200">My Appointments</p>
-                    <p onClick={()=>settoken(false)} className="px-2 py-1 rounded-md cursor-pointer 
+                    <p onClick={logout} className="px-2 py-1 rounded-md cursor-pointer 
                                   hover:bg-white hover:text-black 
                                   transition-colors duration-200">Log Out</p>
                   </div>

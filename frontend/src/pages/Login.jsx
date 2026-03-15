@@ -1,7 +1,14 @@
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
+import axios from 'axios'
+import { toast } from 'react-toastify'
+import { AppContext } from '../context/AppContex'
+import { useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
 
 
 const Login = () => {
+
+    const{ backendUrl,token, setToken} = useContext(AppContext)
 
     const [state, setState] = useState('Sign Up')
 
@@ -9,12 +16,48 @@ const Login = () => {
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
 
+    const navigate = useNavigate()
+    
+
    const onSubmitHandler = async (event) => {
         event.preventDefault();
+
+        try {
+          const endpoint = state === 'Sign Up' ? '/api/user/register' : '/api/user/login'
+          const payload = {
+            email,
+            password
+          }
+
+          if (state === 'Sign Up') {
+            payload.name = name
+          }
+
+          const { data } = await axios.post(`${backendUrl}${endpoint}`, payload)
+
+          if (data.success) {
+            localStorage.setItem('token', data.token)
+            setToken(data.token)
+            toast.success(state === 'Sign Up' ? 'Account created successfully.' : 'Logged in successfully.')
+            setName('')
+            setEmail('')
+            setPassword('')
+          } else {
+            toast.error(data.message)
+          }
+        } catch (error) {
+          toast.error(error.response?.data?.message || error.message)
+        }
    }
 
+   useEffect(()=>{
+      if(token){
+        navigate('/')
+      }
+   },[token])
+
   return (
-    <form className="min-h-[80vh] flex items-center justify-center ">
+    <form onSubmit={onSubmitHandler} className="min-h-[80vh] flex items-center justify-center ">
         <div className="flex flex-col gap-3 m-auto items-start p-8 min-w-[340px] sm:min-w-96 animate-fadeIn bg-white/70 backdrop-blur-md border border-gray-200 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 ease-in-out ">
           <p className=' text-2xl font-semibold text-center'>{state === 'Sign Up' ? 'Create Account' : 'Login'}</p>
           <p>Please {state === 'Sign Up' ? 'sign up' : 'log in'} to book appointment</p> 
@@ -27,13 +70,13 @@ const Login = () => {
            }
           <div className='w-full '>
             <p>Email</p>
-            <input onChange={(e) => setName(e.target.value)} value={email} className="w-full p-3 mt-1 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-all duration-200" type="email" required />
+            <input onChange={(e) => setEmail(e.target.value)} value={email} className="w-full p-3 mt-1 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-all duration-200" type="email" required />
           </div>
           <div className='w-full '>
             <p>password</p>
-            <input onChange={(e) => setName(e.target.value)} value={password} className="w-full p-3 mt-1 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-all duration-200" type="password" required />
+            <input onChange={(e) => setPassword(e.target.value)} value={password} className="w-full p-3 mt-1 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-primary focus:border-primary transition-all duration-200" type="password" required />
           </div>
-          <button className="w-full py-3 my-3 rounded-lg text-white text-base font-medium bg-primary hover:bg-primary/90 hover:scale-[1.02] active:scale-95 transition-all duration-200">{state === 'Sign Up' ? 'Create account' : 'Login'}</button>
+          <button type="submit" className="w-full py-3 my-3 rounded-lg text-white text-base font-medium bg-primary hover:bg-primary/90 hover:scale-[1.02] active:scale-95 transition-all duration-200">{state === 'Sign Up' ? 'Create account' : 'Login'}</button>
             {state === 'Sign Up'
               ? <p>Already have an account? <span onClick={() => setState('Login')} className='text-primary underline cursor-pointer'>Login here</span></p>
               : <p>Create an new account? <span onClick={() => setState('Sign Up')} className='text-primary underline cursor-pointer'>Click here</span></p>
